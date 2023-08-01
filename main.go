@@ -271,45 +271,116 @@ func Handler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		//GenerateBarChart(s, i, contestIdx, maxAcc, ticks, valuesWr)
 		GenerateBarChart(s, i, contestIdx, maxAcc, ticks, values)
 	case "links":
+		fmt.Println(i.Member.Nick)
+		if len(i.Member.Roles) > 0 {
+			err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: "Links de las plataformas y recursos que usamos 🤓",
+					Flags:   discordgo.MessageFlagsEphemeral,
+					Components: []discordgo.MessageComponent{
+						discordgo.ActionsRow{
+							Components: []discordgo.MessageComponent{
+								discordgo.Button{
+									Emoji: discordgo.ComponentEmoji{
+										Name: "📚",
+									},
+									Label: "Artemisa",
+									Style: discordgo.LinkButton,
+									URL:   payload.ArtemisaUrl,
+								},
+								discordgo.Button{
+									Emoji: discordgo.ComponentEmoji{
+										Name: "👨‍⚖️",
+									},
+									Label: "DomJudge UEB",
+									Style: discordgo.LinkButton,
+									URL:   payload.DomJudgeUrl,
+								},
+								discordgo.Button{
+									Emoji: discordgo.ComponentEmoji{
+										Name: "😎",
+									},
+									Label: "Vjudge",
+									Style: discordgo.LinkButton,
+									URL:   payload.VjudgeUrl,
+								},
+								discordgo.Button{
+									Emoji: discordgo.ComponentEmoji{
+										Name: "🧑‍🏫",
+									},
+									Label: "Clases Grabadas",
+									Style: discordgo.LinkButton,
+									URL:   payload.ClassRecordUrl,
+								},
+							},
+						},
+					},
+				},
+			})
+			if err != nil {
+				panic(err)
+			}
+			return
+		}
 		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
-				Content: "Links de las plataformas y recursos que usamos 🤓",
+				Content:    "😕 No cuentas con los permisos para visualizar esta sección.",
+				Flags:      discordgo.MessageFlagsEphemeral,
+				Components: []discordgo.MessageComponent{},
+			},
+		})
+		if err != nil {
+			panic(err)
+		}
+	case "test":
+		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: "Are you comfortable with buttons and other message components?",
 				Flags:   discordgo.MessageFlagsEphemeral,
+				// Buttons and other components are specified in Components field.
 				Components: []discordgo.MessageComponent{
+					// ActionRow is a container of all buttons within the same row.
 					discordgo.ActionsRow{
 						Components: []discordgo.MessageComponent{
 							discordgo.Button{
-								Emoji: discordgo.ComponentEmoji{
-									Name: "📚",
-								},
-								Label: "Artemisa",
-								Style: discordgo.LinkButton,
-								URL:   payload.ArtemisaUrl,
+								// Label is what the user will see on the button.
+								Label: "Yes",
+								// Style provides coloring of the button. There are not so many styles tho.
+								Style: discordgo.SuccessButton,
+								// Disabled allows bot to disable some buttons for users.
+								Disabled: false,
+								// CustomID is a thing telling Discord which data to send when this button will be pressed.
+								CustomID: "fd_yes",
 							},
 							discordgo.Button{
-								Emoji: discordgo.ComponentEmoji{
-									Name: "👨‍⚖️",
-								},
-								Label: "DomJudge UEB",
-								Style: discordgo.LinkButton,
-								URL:   payload.DomJudgeUrl,
+								Label:    "No",
+								Style:    discordgo.DangerButton,
+								Disabled: false,
+								CustomID: "fd_no",
 							},
 							discordgo.Button{
+								Label:    "I don't know",
+								Style:    discordgo.LinkButton,
+								Disabled: false,
+								// Link buttons don't require CustomID and do not trigger the gateway/HTTP event
+								URL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
 								Emoji: discordgo.ComponentEmoji{
-									Name: "😎",
+									Name: "🤷",
 								},
-								Label: "Vjudge",
-								Style: discordgo.LinkButton,
-								URL:   payload.VjudgeUrl,
 							},
+						},
+					},
+					// The message may have multiple actions rows.
+					discordgo.ActionsRow{
+						Components: []discordgo.MessageComponent{
 							discordgo.Button{
-								Emoji: discordgo.ComponentEmoji{
-									Name: "🧑‍🏫",
-								},
-								Label: "Clases Grabadas",
-								Style: discordgo.LinkButton,
-								URL:   payload.ClassRecordUrl,
+								Label:    "Discord Developers server",
+								Style:    discordgo.LinkButton,
+								Disabled: false,
+								URL:      "https://discord.gg/discord-developers",
 							},
 						},
 					},
@@ -372,10 +443,15 @@ func main() {
 		Name:        "links",
 		Description: "pruebas",
 	}
+	//test := &discordgo.ApplicationCommand{
+	//	Name:        "test",
+	//	Description: "test",
+	//}
 
 	CreateCommand(bot, payload.GuildID, ping)
 	CreateCommand(bot, payload.GuildID, chartCommand)
 	CreateCommand(bot, payload.GuildID, buttonComponent)
+	//CreateCommand(bot, payload.GuildID, test)
 
 	bot.AddHandler(Handler)
 	err = bot.Open()

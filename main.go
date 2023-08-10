@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -11,7 +12,9 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -50,16 +53,19 @@ type ContestData struct {
 }
 
 type IEnvironment struct {
-	Api            string
-	UserApi        string
-	PasswordApi    string
-	GuildID        string
-	AppId          string
-	BotToken       string
-	ArtemisaUrl    string
-	DomJudgeUrl    string
-	VjudgeUrl      string
-	ClassRecordUrl string
+	Api                           string
+	UserApi                       string
+	PasswordApi                   string
+	GuildID                       string
+	AppId                         string
+	BotToken                      string
+	ArtemisaUrl                   string
+	DomJudgeUrl                   string
+	VjudgeUrl                     string
+	ClassRecordUrl                string
+	GPCUEBurl                     string
+	RedProgramacionCompetitivaUrl string
+	IdesCompetitivaUrl            string
 }
 
 var payload IEnvironment
@@ -271,13 +277,12 @@ func Handler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		//GenerateBarChart(s, i, contestIdx, maxAcc, ticks, valuesWr)
 		GenerateBarChart(s, i, contestIdx, maxAcc, ticks, values)
 	case "links":
-		fmt.Println(i.Member.Nick)
 		if len(i.Member.Roles) > 0 {
 			err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
 					Content: "Links de las plataformas y recursos que usamos 🤓",
-					Flags:   discordgo.MessageFlagsEphemeral,
+					//Flags:   discordgo.MessageFlagsEphemeral,
 					Components: []discordgo.MessageComponent{
 						discordgo.ActionsRow{
 							Components: []discordgo.MessageComponent{
@@ -299,6 +304,26 @@ func Handler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 								},
 								discordgo.Button{
 									Emoji: discordgo.ComponentEmoji{
+										Name: "🧑‍🏫",
+									},
+									Label: "Clases Grabadas",
+									Style: discordgo.LinkButton,
+									URL:   payload.ClassRecordUrl,
+								},
+							},
+						},
+						discordgo.ActionsRow{
+							Components: []discordgo.MessageComponent{
+								discordgo.Button{
+									Emoji: discordgo.ComponentEmoji{
+										Name: "👨‍💻",
+									},
+									Label: "GitHub GPC",
+									Style: discordgo.LinkButton,
+									URL:   payload.GPCUEBurl,
+								},
+								discordgo.Button{
+									Emoji: discordgo.ComponentEmoji{
 										Name: "😎",
 									},
 									Label: "Vjudge",
@@ -307,11 +332,23 @@ func Handler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 								},
 								discordgo.Button{
 									Emoji: discordgo.ComponentEmoji{
-										Name: "🧑‍🏫",
+										Name: "💪",
 									},
-									Label: "Clases Grabadas",
+									Label: "registro RPC",
 									Style: discordgo.LinkButton,
-									URL:   payload.ClassRecordUrl,
+									URL:   payload.RedProgramacionCompetitivaUrl,
+								},
+							},
+						},
+						discordgo.ActionsRow{
+							Components: []discordgo.MessageComponent{
+								discordgo.Button{
+									Emoji: discordgo.ComponentEmoji{
+										Name: "⌨️",
+									},
+									Label: "IDES",
+									Style: discordgo.LinkButton,
+									URL:   payload.IdesCompetitivaUrl,
 								},
 							},
 						},
@@ -390,6 +427,34 @@ func Handler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		if err != nil {
 			panic(err)
 		}
+	case "info":
+		readFile, err := os.Open("./README.md")
+		if err != nil {
+			panic(err)
+		}
+		fileScanner := bufio.NewScanner(readFile)
+		fileScanner.Split(bufio.ScanLines)
+		var fileLines []string
+
+		for fileScanner.Scan() {
+			fileLines = append(fileLines, fileScanner.Text())
+		}
+
+		err = readFile.Close()
+		if err != nil {
+			return
+		}
+
+		err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Flags:   discordgo.MessageFlagsEphemeral,
+				Content: strings.Join(fileLines[:], "\n"),
+			},
+		})
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
@@ -422,36 +487,37 @@ func main() {
 			Name:  i.FormalName,
 		})
 	}
-	ping := &discordgo.ApplicationCommand{
-		Name:        "ping",
-		Description: "verificar el estado del bot",
-	}
-	chartCommand := &discordgo.ApplicationCommand{
-		Name:        "chart",
-		Description: "construye un grafico con el nombre de la competencia",
-		Options: []*discordgo.ApplicationCommandOption{
-			{
-				Type:        discordgo.ApplicationCommandOptionString,
-				Name:        "competencia",
-				Description: "nombre corto de la competencia",
-				Required:    true,
-				Choices:     choicesCompetitive,
+	var commands []discordgo.ApplicationCommand
+	commands = append(commands,
+		discordgo.ApplicationCommand{
+			Name:        "ping",
+			Description: "Utilizado para conocer el estado del Bot.",
+		},
+		discordgo.ApplicationCommand{
+			Name:        "chart",
+			Description: "Muestra una lista deplegable con las competencias activas en DomJudge",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "competencia",
+					Description: "nombre corto de la competencia",
+					Required:    true,
+					Choices:     choicesCompetitive,
+				},
 			},
 		},
+		discordgo.ApplicationCommand{
+			Name:        "links",
+			Description: "Despliega un listado de recursos y utilidades para los entrenamientos.",
+		},
+		discordgo.ApplicationCommand{
+			Name:        "info",
+			Description: "Muestra una descripción del Bot y el listado de comandos disponibles.",
+		},
+	)
+	for _, command := range commands {
+		CreateCommand(bot, payload.GuildID, &command)
 	}
-	buttonComponent := &discordgo.ApplicationCommand{
-		Name:        "links",
-		Description: "pruebas",
-	}
-	//test := &discordgo.ApplicationCommand{
-	//	Name:        "test",
-	//	Description: "test",
-	//}
-
-	CreateCommand(bot, payload.GuildID, ping)
-	CreateCommand(bot, payload.GuildID, chartCommand)
-	CreateCommand(bot, payload.GuildID, buttonComponent)
-	//CreateCommand(bot, payload.GuildID, test)
 
 	bot.AddHandler(Handler)
 	err = bot.Open()

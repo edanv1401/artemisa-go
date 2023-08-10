@@ -13,7 +13,7 @@ Bot de discord para el grupo de programacion competitiva universidad el bosque (
 ![chart](https://github.com/edanv1401/artemisa-go/assets/62625858/cc135df6-5f5c-44bc-8cca-b2bca2b3e2e6)
 
 ### ping
-- Utilizado para conocer el estado del Bot, response ```pong``` en caso que todo funcione correctamente.
+- Utilizado para conocer el estado del Bot, response `Pong!` en caso que todo funcione correctamente.
 
 ### info
 - Muestra una descripción del Bot y el listado de comandos disponibles.

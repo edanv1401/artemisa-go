@@ -1,7 +1,16 @@
-# Artemisa
-bot de discord para el grupo de programacion competitiva universidad el bosque (GPC UEB)
+![image](https://github.com/edanv1401/artemisa-go/assets/62625858/69a5c980-6c1a-467c-9878-d430fbe2047b)# Artemisa
+Bot de discord para el grupo de programacion competitiva universidad el bosque (GPC UEB)
 ## Comandos
+> todos los comandos comienzan con /
 ### links
-- muestra un listado de recursos y utilidades para los entrenamientos (se debe contar con permisos), adicionalmente responde solamente a quien invoca el bot.
+- Despliega un listado de recursos y utilidades para los entrenamientos (se debe contar con permisos).
 
-  ![image](https://github.com/edanv1401/artemisa-go/assets/62625858/fcb038f9-91e6-4278-9991-9e885665a9f9)
+![links](https://github.com/edanv1401/artemisa-go/assets/62625858/fcb038f9-91e6-4278-9991-9e885665a9f9)
+
+### chart
+- Muestra una lista deplegable con las competencias activas en [DomJudge](https://domjudgeacademicueb.com/public), al seleccionar una de las opciones genera un grafico con los ejercicios que su veredicto fue ACC✔️
+
+![chart](https://github.com/edanv1401/artemisa-go/assets/62625858/cc135df6-5f5c-44bc-8cca-b2bca2b3e2e6)
+
+### ping
+- Utilizado para conocer el estado del Bot, response ```pong``` en caso que todo funcione correctamente.

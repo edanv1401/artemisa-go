@@ -1,7 +1,7 @@
 # Artemisa
 Bot de discord para el grupo de programacion competitiva universidad el bosque (GPC UEB)
 ## Comandos
-> todos los comandos comienzan con /
+> todos los comandos deben iniciar con /
 ### links
 - Despliega un listado de recursos y utilidades para los entrenamientos (se debe contar con permisos).
 
@@ -14,3 +14,6 @@ Bot de discord para el grupo de programacion competitiva universidad el bosque (
 
 ### ping
 - Utilizado para conocer el estado del Bot, response ```pong``` en caso que todo funcione correctamente.
+
+### info
+- Muestra una descripción del Bot y el listado de comandos disponibles.

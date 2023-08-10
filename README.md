@@ -5,7 +5,7 @@ Bot de discord para el grupo de programacion competitiva universidad el bosque (
 ### links
 - Despliega un listado de recursos y utilidades para los entrenamientos (se debe contar con permisos).
 
-![links](https://github.com/edanv1401/artemisa-go/assets/62625858/fcb038f9-91e6-4278-9991-9e885665a9f9)
+![links](https://github.com/edanv1401/artemisa-go/assets/62625858/1d8ca9f5-d87e-4b66-855b-bc157a2f9cdd)
 
 ### chart
 - Muestra una lista deplegable con las competencias activas en [DomJudge](https://domjudgeacademicueb.com/public), al seleccionar una de las opciones genera un grafico con los ejercicios que su veredicto fue ACC✔️

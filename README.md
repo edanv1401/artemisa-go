@@ -1,4 +1,4 @@
-![image](https://github.com/edanv1401/artemisa-go/assets/62625858/69a5c980-6c1a-467c-9878-d430fbe2047b)# Artemisa
+# Artemisa
 Bot de discord para el grupo de programacion competitiva universidad el bosque (GPC UEB)
 ## Comandos
 > todos los comandos comienzan con /
